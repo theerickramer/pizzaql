@@ -8,6 +8,7 @@ const client = new ApolloClient({
 });
 
 class App extends Component {
+  state = { selected: 'small' };
   render() {
     return (
       <ApolloProvider client={client}>
@@ -15,7 +16,15 @@ class App extends Component {
           query={gql`
             {
               pizzaSizes {
+                name
                 maxToppings
+                basePrice
+                toppings {
+                  topping {
+                    name
+                  }
+                  defaultSelected
+                }
               }
             }
           `}
@@ -23,12 +32,24 @@ class App extends Component {
           {({ loading, error, data }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error :(</p>;
-
-            return data.pizzaSizes.map(({ maxToppings }) => (
-              <div key={maxToppings}>
-                <p>maxToppings: {maxToppings}</p>
-              </div>
-            ));
+            console.log(data)
+            return data.pizzaSizes.map(
+              ({ name, maxToppings, basePrice, toppings }, index) => (
+                <div key={index}>
+                  <h3>{name}</h3>
+                  <p>{!maxToppings ? 'Unlimited' : maxToppings} Toppings</p>
+                  <p>Price: {basePrice}</p>
+                  {this.state.selected === name
+                    ? toppings.map((topping, index) => (
+                        <div key={index}>
+                          <input type="checkbox" checked={topping.defaultSelected}/>
+                          {topping.topping.name}
+                        </div>
+                      ))
+                    : null}
+                </div>
+              )
+            );
           }}
         </Query>
       </ApolloProvider>
