@@ -22,6 +22,7 @@ class App extends Component {
                 toppings {
                   topping {
                     name
+                    price
                   }
                   defaultSelected
                 }
@@ -34,19 +35,40 @@ class App extends Component {
             if (error) return <p>Error :(</p>;
             console.log(data)
             return data.pizzaSizes.map(
-              ({ name, maxToppings, basePrice, toppings }, index) => (
+              (
+                { name, maxToppings, basePrice, toppings },
+                index
+              ) => (
                 <div key={index}>
+                  <input
+                    type="checkbox"
+                    checked={this.state.selected === name}
+                    onChange={() =>
+                      this.state.selected === name
+                        ? this.setState({ selected: null })
+                        : this.setState({ selected: name })
+                    }
+                  />
                   <h3>{name}</h3>
-                  <p>{!maxToppings ? 'Unlimited' : maxToppings} Toppings</p>
+                  <p>
+                    {!maxToppings ? 'Unlimited' : maxToppings}{' '}
+                    Toppings
+                  </p>
                   <p>Price: {basePrice}</p>
                   {this.state.selected === name
                     ? toppings.map((topping, index) => (
                         <div key={index}>
-                          <input type="checkbox" checked={topping.defaultSelected}/>
+                          <input
+                            type="checkbox"
+                            checked={topping.defaultSelected}
+                          />
                           {topping.topping.name}
+                          {' $'}
+                          {topping.topping.price.toFixed(2)}
                         </div>
                       ))
                     : null}
+                    <hr />
                 </div>
               )
             );
