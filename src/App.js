@@ -10,10 +10,22 @@ const client = new ApolloClient({
 });
 
 class App extends Component {
-  state = { selected: null, cart: [] };
-  toggleSelectedPizzaSize = (pizzaSize) => {
+  state = { selected: null, toppings: [], cart: [] };
+  toggleSelectedPizzaSize = pizzaSize => {
     this.setState({ selected: pizzaSize });
-  }
+  };
+  toggleToppingSelected = topping => {
+    const toppings = this.state.toppings;
+    const isAddedAt = toppings.indexOf(topping);
+    if (isAddedAt === -1) {
+      toppings.push(topping);
+    } else {
+      toppings.splice(isAddedAt, 1);
+    }
+    this.setState({
+      toppings: toppings
+    });
+  };
   render() {
     return (
       <div className={styles.app}>
@@ -43,7 +55,9 @@ class App extends Component {
                 <PizzaSizes
                   data={data}
                   selected={this.state.selected}
+                  selectedToppings ={this.state.toppings}
                   toggleSelected={this.toggleSelectedPizzaSize}
+                  toggleTopping={this.toggleToppingSelected}
                 />
               );
             }}

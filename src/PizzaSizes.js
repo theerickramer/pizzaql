@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './App.module.css';
 
-const PizzaSizes = ({ data, selected, toggleSelected }) => {
+const PizzaSizes = ({ data, selected, selectedToppings, toggleSelected, toggleTopping }) => {
   return data.pizzaSizes.map(
     ({ name, maxToppings, basePrice, toppings }, index) => (
       <div key={index}>
@@ -10,9 +10,7 @@ const PizzaSizes = ({ data, selected, toggleSelected }) => {
           className={styles.pizzaSizeSelect}
           type="checkbox"
           onChange={() =>
-            selected === name
-              ? toggleSelected(null)
-              : toggleSelected(name)
+            selected === name ? toggleSelected(null) : toggleSelected(name)
           }
         />
         <h3 className={styles.pizzaSize}>{name}</h3>
@@ -21,7 +19,11 @@ const PizzaSizes = ({ data, selected, toggleSelected }) => {
         {selected === name
           ? toppings.map((topping, index) => (
               <div key={index}>
-                <input type="checkbox" checked={topping.defaultSelected} />
+                <input
+                  type="checkbox"
+                  checked={topping.defaultSelected || selectedToppings.includes(topping.topping.name)}
+                  onChange={() => toggleTopping(topping.topping.name)}
+                />
                 {topping.topping.name}
                 {' $'}
                 {topping.topping.price.toFixed(2)}
