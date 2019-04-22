@@ -3,6 +3,7 @@ import ApolloClient from 'apollo-boost';
 import gql from 'graphql-tag';
 import { ApolloProvider, Query } from 'react-apollo';
 import PizzaSizes from './PizzaSizes';
+import Cart from './Cart';
 import styles from './App.module.css';
 
 const client = new ApolloClient({
@@ -114,21 +115,7 @@ class App extends Component {
             }}
           </Query>
         </ApolloProvider>
-        <h3>Cart</h3>
-        {this.state.cart.items.map(item => (
-          <div>
-            <p>(1) Size: {item.size}</p>
-            <p>Base Price: ${item.basePrice}</p>
-            <ul>
-              {item.toppings.map(topping => (
-                <li>
-                  {topping.topping.name} ${topping.topping.price.toFixed(2)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <h4>Total: ${this.state.cart.total.toFixed(2)}</h4>
+        <Cart { ...this.state.cart } />
       </div>
     );
   }
