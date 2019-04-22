@@ -27,12 +27,24 @@ const query = gql`
 `;
 
 class App extends Component {
-  state = { selected: null, toppings: [], cart: [] };
-  toggleSelectedPizzaSize = pizzaSize => {
-    this.setState({ selected: pizzaSize });
+  state = {
+    selected: {
+      size: null,
+      toppings: []
+    },
+    cart: {
+      items: [],
+      total: 0
+    }
   };
+
+  toggleSelectedPizzaSize = pizzaSize => {
+    this.setState({ selected: { size: pizzaSize, toppings: [] } });
+  };
+
   toggleToppingSelected = toppingSelected => {
-    const toppings = this.state.toppings;
+    const selected = this.state.selected;
+    const { toppings } = selected;
     const isAddedAt = toppings.findIndex(
       topping => topping.topping.name === toppingSelected.topping.name
     );
@@ -41,10 +53,21 @@ class App extends Component {
     } else {
       toppings.splice(isAddedAt, 1);
     }
+    selected.toppings = toppings;
+    this.setState({ selected });
+  };
+
+  addToCart = () => {
+    const cart = this.state.cart;
+    cart.items.push({
+      size: this.state.selected,
+      toppings: this.state.toppings
+    });
     this.setState({
-      toppings: toppings
+      cart
     });
   };
+
   render() {
     return (
       <div className={styles.app}>
@@ -57,14 +80,27 @@ class App extends Component {
                 <PizzaSizes
                   data={data}
                   selected={this.state.selected}
-                  selectedToppings={this.state.toppings}
                   toggleSelected={this.toggleSelectedPizzaSize}
                   toggleTopping={this.toggleToppingSelected}
+                  addToCart={this.addToCart}
                 />
               );
             }}
           </Query>
         </ApolloProvider>
+        <h3>Cart</h3>
+        {this.state.cart.items.map(item => (
+          <div>
+            <p>{item.size}</p>
+            <ul>
+              {item.toppings.map(topping => (
+                <li>
+                  {topping.topping.name} ${topping.topping.price.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     );
   }
