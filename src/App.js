@@ -30,6 +30,7 @@ class App extends Component {
   state = {
     selected: {
       size: null,
+      basePrice: null,
       toppings: []
     },
     cart: {
@@ -38,8 +39,14 @@ class App extends Component {
     }
   };
 
-  toggleSelectedPizzaSize = pizzaSize => {
-    this.setState({ selected: { size: pizzaSize, toppings: [] } });
+  toggleSelectedPizzaSize = (pizzaSize, basePrice) => {
+    this.setState({
+      selected: {
+        size: pizzaSize,
+        basePrice: basePrice,
+        toppings: []
+      }
+    });
   };
 
   toggleToppingSelected = toppingSelected => {
@@ -57,14 +64,33 @@ class App extends Component {
     this.setState({ selected });
   };
 
+  sumItems = (base, additionalPricesArray) =>
+    additionalPricesArray.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      base
+    );
+
   addToCart = () => {
-    const cart = this.state.cart;
-    cart.items.push({
-      size: this.state.selected,
-      toppings: this.state.toppings
+    let { items, total } = this.state.cart;
+    const { size, basePrice, toppings } = this.state.selected;
+
+    items.push({
+      size,
+      basePrice,
+      toppings
     });
+
+    total += this.sumItems(
+      basePrice,
+      toppings.map(topping => topping.topping.price)
+    );
+
     this.setState({
-      cart
+      selected: {},
+      cart: {
+        items,
+        total
+      }
     });
   };
 
@@ -91,7 +117,8 @@ class App extends Component {
         <h3>Cart</h3>
         {this.state.cart.items.map(item => (
           <div>
-            <p>{item.size}</p>
+            <p>(1) Size: {item.size}</p>
+            <p>Base Price: ${item.basePrice}</p>
             <ul>
               {item.toppings.map(topping => (
                 <li>
@@ -101,6 +128,7 @@ class App extends Component {
             </ul>
           </div>
         ))}
+        <h4>Total: ${this.state.cart.total.toFixed(2)}</h4>
       </div>
     );
   }

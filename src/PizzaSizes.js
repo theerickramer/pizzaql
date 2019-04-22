@@ -20,12 +20,12 @@ const PizzaSizes = ({
           className={styles.pizzaSizeSelect}
           type="checkbox"
           onChange={() =>
-            isSelectedSize(name) ? toggleSelected(null) : toggleSelected(name)
+            isSelectedSize(name) ? toggleSelected(null) : toggleSelected(name, basePrice)
           }
         />
         <h3 className={styles.pizzaSize}>{name}</h3>
         <p>{!maxToppings ? 'Unlimited' : maxToppings} Toppings</p>
-        <p>Price: {basePrice}</p>
+        <p>Base Price: {basePrice}</p>
         {isSelectedSize(name) &&
           toppings.map((topping, index) => {
             if (
